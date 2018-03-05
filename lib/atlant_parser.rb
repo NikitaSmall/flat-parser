@@ -1,5 +1,4 @@
 require 'nokogiri'
-require 'open-uri'
 
 require_relative './base_parser'
 
@@ -15,7 +14,12 @@ class AtlantParser < BaseParser
   end
 
   def filter
-    @data.select { |flat| flat[:title] != 'Коммунальная' }
+    @data.select! { |flat| flat[:title] != 'Коммунальная' }
+
+    @data.select! do |flat|
+      pure_address = flat[:address][flat[:address] =~ /,([а-яА-Я ]+)/...flat[:address].length]
+      distance(@init_position, pure_address) < @desired_distance
+    end
   end
 
   private
