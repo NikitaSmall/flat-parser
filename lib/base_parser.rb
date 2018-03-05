@@ -1,6 +1,7 @@
 require 'json'
 require 'erb'
 require 'open-uri'
+require 'logger'
 
 require 'google_drive'
 
@@ -20,6 +21,8 @@ class BaseParser
     @init_position = init_position
 
     @spreadsheet_id = spreadsheet_id
+
+    @logger = Logger.new(STDOUT)
   end
 
   def process

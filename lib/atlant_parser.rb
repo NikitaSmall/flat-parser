@@ -14,12 +14,16 @@ class AtlantParser < BaseParser
   end
 
   def filter
+    @logger.info("Flats before filter: #{@data.length}")
+
     @data.select! { |flat| flat[:title] != 'Коммунальная' }
 
     @data.select! do |flat|
       pure_address = flat[:address][flat[:address] =~ /,([а-яА-Я ]+)/...flat[:address].length]
       distance(@init_position, pure_address) < @desired_distance
     end
+
+    @logger.info("Flats after filter: #{@data.length}")
   end
 
   private
@@ -32,13 +36,17 @@ class AtlantParser < BaseParser
       break if flats.size == 0
 
       flats.each do |flat|
-        @data << {
-          title: flat.at_css('.object-title').text.strip,
-          size: flat.at_css('.object-sqr').text.strip,
-          address: flat.at_css('.object-address').text.strip,
-          price: flat.at_css('.object-price').text.strip,
-          link: flat.at_css('.object-title')['href']
-        }
+        begin
+          @data << {
+            title: flat.at_css('.object-title').text.strip,
+            size: flat.at_css('.object-sqr').text.strip,
+            address: flat.at_css('.object-address').text.strip,
+            price: flat.at_css('.object-price').text.strip,
+            link: flat.at_css('.object-title')['href']
+          }
+        rescue NoMethodError
+          next
+        end
       end
     end
   end
