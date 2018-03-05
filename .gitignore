@@ -13,6 +13,8 @@
 # Used by dotenv library to load environment variables.
 .env
 
+*.json
+
 ## Environment normalization:
 /.bundle/
 /vendor/bundle
