@@ -9,6 +9,12 @@ class AtlantParser < BaseParser
     '&max_price=%{desired_price}&min_floor=2&page=%{page_number}'
   ].freeze
 
+  def initialize(base_url, spreadsheet_id:, price: 50000, distance: 5000,
+                           city: 'Одесса', init_position: 'Маразлиевская')
+    super
+    load_whitelist('atlant.txt')
+  end
+
   def collect
     LINKS.each { |link| collect_from_page(link) }
   end
@@ -17,6 +23,7 @@ class AtlantParser < BaseParser
     @logger.info("Flats before filter: #{@data.length}")
 
     @data.select! { |flat| flat[:title] != 'Коммунальная' }
+    @data.select! { |flat| @whitelist.any? { |whiteflat| flat[:address].include?(whiteflat) } }
 
     @data.select! do |flat|
       pure_address = flat[:address][flat[:address] =~ /,([а-яА-Я ]+)/...flat[:address].length]

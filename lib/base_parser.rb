@@ -23,6 +23,8 @@ class BaseParser
     @spreadsheet_id = spreadsheet_id
 
     @logger = Logger.new(STDOUT)
+
+    @whitelist = []
   end
 
   def process
@@ -83,5 +85,9 @@ class BaseParser
     end
 
     ws.save
+  end
+
+  def load_whitelist(list_name)
+    @whitelist = File.read(File.join(File.dirname(__FILE__), '..', 'whitelists', list_name)).split(',')
   end
 end
