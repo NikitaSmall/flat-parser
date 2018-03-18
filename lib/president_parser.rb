@@ -16,7 +16,9 @@ class PresidentParser < BaseParser
     @logger.info("Flats before filter: #{@data.length}")
 
     @data.select! { |flat| flat[:title] != 'Коммунальная' }
-    @data.select! { |flat| @whitelist.any? { |whiteflat| flat[:address].include?(whiteflat) } }
+    @data.select! do |flat|
+      @whitelist.any? { |whiteflat| flat[:address].include?(whiteflat) || flat[:address2].include?(whiteflat) }
+    end
 
     @data.select! do |flat|
       distance(@init_position, flat[:address]) < @desired_distance
@@ -40,6 +42,7 @@ class PresidentParser < BaseParser
             title: flat.at_css('div div:nth-child(2) div:nth-child(1)').text.strip,
             size: flat.at_css('div div:nth-child(2) div:nth-child(4)').text.strip,
             address: flat.at_css('div div:nth-child(2) div:nth-child(2)').text.strip,
+            address2: flat.at_css('div div:nth-child(2) div:nth-child(3)').text.strip,
             price: flat.at_css('div div:nth-child(2) div:nth-child(6)').text.split('/')[1].strip,
             link: flat['href']
           }
