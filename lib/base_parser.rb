@@ -24,7 +24,7 @@ class BaseParser
 
     @logger = Logger.new(STDOUT)
 
-    @whitelist = []
+    @whitelist = load_whitelist('atlant.txt')
   end
 
   def process
@@ -88,6 +88,6 @@ class BaseParser
   end
 
   def load_whitelist(list_name)
-    @whitelist = File.read(File.join(File.dirname(__FILE__), '..', 'whitelists', list_name)).split(',')
+    File.read(File.join(File.dirname(__FILE__), '..', 'whitelists', list_name)).split(',')
   end
 end
